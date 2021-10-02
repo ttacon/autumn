@@ -51,4 +51,11 @@ func TestNewEngine(t *testing.T) {
 	} else if len(modelTargets) != 1 {
 		t.Error("expected 1 Go file to be found, found: ", len(modelTargets))
 	}
+
+	model := modelTargets[0]
+	if modl, ok := model.(*modelTarget); !ok {
+		t.Error("expect modl to be a modelTarget, somehow was not")
+	} else if modl.pkgName != "models" {
+		t.Error("expected pkgName to be 'models', found: " + modl.pkgName)
+	}
 }
