@@ -1,6 +1,8 @@
 package config
 
 type Config struct {
+	Name       string
+
 	Controller ControllerConfig
 	Router     RouterConfig
 	Service    ServiceConfig
