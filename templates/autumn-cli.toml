@@ -1,0 +1,10 @@
+[general]
+name = "autumn"
+description = "A code generation tool that helps you relax"
+generator = "github.com/urfave/cli"
+
+
+[[command]]
+name = "version"
+description = "Print out the current version"
+action = "version"
