@@ -1,0 +1,28 @@
+sources:
+  go: true
+
+source_path: cmd/
+
+
+
+root: true
+
+allowed:
+  - apache-2.0
+  - bsd-2-clause
+  - bsd-3-clause
+  - isc
+  - mit
+  - cc0-1.0
+  - unlicense
+
+
+reviewed:
+  go:
+    - golang.org/x/mod/modfile
+    - golang.org/x/mod/module
+    - golang.org/x/mod/semver
+    - golang.org/x/xerrors
+    - golang.org/x/xerrors/internal
+    - golang.org/x/mod/internal/lazyregexp
+    - github.com/russross/blackfriday/v2
