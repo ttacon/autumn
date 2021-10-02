@@ -18,13 +18,16 @@ type ModelTarget interface {
 	GetDocumentText() (string, error)
 	GetModel() (interface{}, error)
 	GetLocation() (string, error)
+	ToTemplateVariables() map[string]interface{}
 }
 
 type modelTarget struct {
 	astNode            ast.Node
 	docText            string
+	typeNode           *ast.TypeSpec
 	structTypeNode     *ast.StructType
 	definitionPosition token.Position
+	pkgName            string
 }
 
 func (mt *modelTarget) GetDocumentText() (string, error) {
@@ -35,6 +38,12 @@ func (mt *modelTarget) GetModel() (interface{}, error) {
 }
 func (mt *modelTarget) GetLocation() (string, error) {
 	return mt.definitionPosition.String(), nil
+}
+func (mt *modelTarget) ToTemplateVariables() map[string]interface{} {
+	return map[string]interface{}{
+		"Name":             mt.typeNode.Name.String(),
+		"ModelPackageName": mt.pkgName,
+	}
 }
 
 type engine struct {
@@ -137,8 +146,10 @@ func modelTargetFromText(name, text string) ([]ModelTarget, error) {
 						targets = append(targets, &modelTarget{
 							astNode:            node,
 							docText:            typeSpec.Doc.Text(),
+							typeNode:           typeSpec,
 							structTypeNode:     structType,
 							definitionPosition: fset.Position(typeSpec.Pos()),
+							pkgName:            f.Name.String(),
 						})
 					}
 				}
