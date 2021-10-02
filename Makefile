@@ -15,7 +15,13 @@ tomlcli: ## Rebuild the CLI interface.
 cli: tomlcli ## Make the CLI binary for local testing.
 	CGO_ENABLED=0 go build -o autumn ./cmd
 
-binaries:
+binaries: bin-linux bin-darwin-amd64 bin-darwin-arm64
+
+bin-linux: ## Build the default linux version.
 	env GOOS=linux  GOARCH=amd64 go build -ldflags="-X 'main.AutumnVersion=${GITHUB_REF/refs\/tags\//}'" -o osnp.linux.amd64
-    env GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'main.AutumnVersion=${GITHUB_REF/refs\/tags\//}'" -o osnp.darwin.amd64
-    env GOOS=darwin GOARCH=arm64 go build -ldflags="-X 'main.AutumnVersion=${GITHUB_REF/refs\/tags\//}'" -o osnp.darwin.arm64
+
+bin-darwin-amd64: ## Build the non-M1 macOS version.
+	env GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'main.AutumnVersion=${GITHUB_REF/refs\/tags\//}'" -o osnp.darwin.amd64
+
+bin-darwin-arm64: ## Build the M1 macOS version.
+	env GOOS=darwin GOARCH=arm64 go build -ldflags="-X 'main.AutumnVersion=${GITHUB_REF/refs\/tags\//}'" -o osnp.darwin.arm64

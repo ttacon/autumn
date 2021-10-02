@@ -22,6 +22,19 @@ func main() {
 			Action:      version,
 			Description: "Print out the current version",
 		},
+		&cli.Command{
+			Name:        "init",
+			Action:      initCommand,
+			Description: "Initialize an autumn configuration file",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name: "force",
+					Aliases: []string{
+						"f",
+					},
+				},
+			},
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)

@@ -8,3 +8,15 @@ generator = "github.com/urfave/cli"
 name = "version"
 description = "Print out the current version"
 action = "version"
+
+[[command]]
+name = "init"
+description = "Initialize an autumn configuration file"
+action = "initCommand"
+
+[[command.flags]]
+type = "bool"
+name = "force"
+aliases = [ "f" ]
+description = "Force creating a new config file even if one exists"
+value = false
