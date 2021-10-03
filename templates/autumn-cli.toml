@@ -20,3 +20,8 @@ name = "force"
 aliases = [ "f" ]
 description = "Force creating a new config file even if one exists"
 value = false
+
+[[command]]
+name = "get"
+description = "Retrieve all frameworks."
+action = "get"
