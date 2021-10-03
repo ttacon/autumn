@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
+	github.com/go-git/go-git/v5 v5.4.2 // indirect
 	github.com/ttacon/toml2cli v0.2.0 // indirect
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/yuin/goldmark v1.4.1 // indirect

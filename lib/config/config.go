@@ -1,25 +1,49 @@
 package config
 
 type Config struct {
-	Name       string
+	Name string
 
 	Controller ControllerConfig
 	Router     RouterConfig
 	Service    ServiceConfig
 }
 
+type FrameworkGetter interface {
+	GetFramework() string
+	GetVersion() string
+	GetProtocol() string
+}
+
+type FrameworkInfo struct {
+	Module   string
+	Version  string
+	Protocol string
+}
+
 type ControllerConfig struct {
-	Framework  string
+	FrameworkInfo
 	ModulePath string
 }
 
+func (c FrameworkInfo) GetFramework() string {
+	return c.Module
+}
+
+func (c FrameworkInfo) GetVersion() string {
+	return c.Version
+}
+
+func (c FrameworkInfo) GetProtocol() string {
+	return c.Protocol
+}
+
 type RouterConfig struct {
-	Framework  string
+	FrameworkInfo
 	ModulePath string
 }
 
 type ServiceConfig struct {
-	Framework           string
+	FrameworkInfo
 	ModulePath          string
 	TemplatesToGenerate []string
 }

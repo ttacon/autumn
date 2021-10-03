@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/BurntSushi/toml"
 	"github.com/ttacon/autumn/lib/config"
@@ -21,6 +22,11 @@ func initCommand(c *cli.Context) error {
 		return err
 	}
 	root := os.DirFS(cwd)
+
+	if err := ensureAutumnDirExists(); err != nil {
+		fmt.Println("failed to ensure that the .autumn directory exists")
+		return err
+	}
 
 	if configExists, err := checkForConfigFile(root); err != nil {
 		fmt.Println("failed to check for existing config file: ", err)
@@ -45,24 +51,34 @@ func initCommand(c *cli.Context) error {
 	}
 	conf.Name = packageName
 
+	configFilePath := filepath.Join(
+		autumnDir,
+		configFileName,
+	)
+
 	var buf = bytes.NewBuffer(nil)
 	if err := toml.NewEncoder(buf).Encode(conf); err != nil {
 		fmt.Println("failed to prepare config for storage: ", err)
 		return err
-	} else if err := ioutil.WriteFile(configFileName, buf.Bytes(), 0644); err != nil {
+	} else if err := ioutil.WriteFile(configFilePath, buf.Bytes(), 0644); err != nil {
 		fmt.Println("failed to write file to storage: ", err)
 		return err
 	}
 
-	return nil
+	return retrieveSourcesForEngine(conf)
 }
 
 var (
-	configFileName = ".autumn"
+	configFileName = "config"
 )
 
 func checkForConfigFile(root fs.FS) (bool, error) {
-	if _, err := root.Open(configFileName); err != nil {
+	if _, err := root.Open(
+		filepath.Join(
+			autumnDir,
+			configFileName,
+		),
+	); err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
 		}
@@ -88,4 +104,18 @@ func pkgNameFromModFile(root fs.FS) (string, error) {
 	}
 
 	return modFile.Module.Mod.Path, nil
+}
+
+var (
+	autumnDir = ".autumn"
+)
+
+func ensureAutumnDirExists() error {
+	return os.MkdirAll(
+		filepath.Join(
+			autumnDir,
+			"frameworks",
+		),
+		os.ModeDir|0755,
+	)
 }

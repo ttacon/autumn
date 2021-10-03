@@ -18,14 +18,14 @@ func main() {
 
 	app.Commands = []*cli.Command{
 		&cli.Command{
-			Name:        "version",
 			Action:      version,
+			Name:        "version",
 			Description: "Print out the current version",
 		},
 		&cli.Command{
+			Description: "Initialize an autumn configuration file",
 			Name:        "init",
 			Action:      initCommand,
-			Description: "Initialize an autumn configuration file",
 			Flags: []cli.Flag{
 				&cli.BoolFlag{
 					Name: "force",
@@ -34,6 +34,11 @@ func main() {
 					},
 				},
 			},
+		},
+		&cli.Command{
+			Action:      get,
+			Name:        "get",
+			Description: "Retrieve all frameworks.",
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
