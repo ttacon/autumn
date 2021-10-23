@@ -26,3 +26,4 @@ reviewed:
     - golang.org/x/xerrors/internal
     - golang.org/x/mod/internal/lazyregexp
     - github.com/russross/blackfriday/v2
+    - github.com/ProtonMail/go-crypto
