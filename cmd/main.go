@@ -36,9 +36,9 @@ func main() {
 			},
 		},
 		&cli.Command{
-			Action:      get,
-			Name:        "get",
 			Description: "Retrieve all frameworks.",
+			Name:        "get",
+			Action:      get,
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
