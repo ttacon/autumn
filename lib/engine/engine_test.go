@@ -58,4 +58,10 @@ func TestNewEngine(t *testing.T) {
 	} else if modl.pkgName != "models" {
 		t.Error("expected pkgName to be 'models', found: " + modl.pkgName)
 	}
+
+	if modelName, err := model.Name(); err != nil {
+		t.Error("failed to get model name: ", err)
+	} else if modelName != "ResourceModel" {
+		t.Error("got unexpected model name: ", modelName)
+	}
 }

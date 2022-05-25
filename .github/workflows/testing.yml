@@ -31,7 +31,7 @@ jobs:
       # Code pulled from this example: https://medium.com/synechron/how-to-set-up-a-test-coverage-threshold-in-go-and-github-167f69b940dc
       - name: Quality Gate - Test coverage shall be above threshold
         env:
-          TESTCOVERAGE_THRESHOLD: 80.0
+          TESTCOVERAGE_THRESHOLD: 50.0
         run: |
           echo "Quality Gate: checking test coverage is above threshold ..."
           echo "Threshold             : $TESTCOVERAGE_THRESHOLD %"
