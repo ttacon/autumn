@@ -32,7 +32,7 @@ func initCommand(c *cli.Context) error {
 		fmt.Println("failed to check for existing config file: ", err)
 		return err
 	} else if configExists {
-		if c.Bool("force") {
+		if !c.Bool("force") {
 			fmt.Println("found existing configuration file, exiting")
 			return nil
 		}
