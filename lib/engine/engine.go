@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/parser"
@@ -15,6 +16,8 @@ type Engine interface {
 }
 
 type ModelTarget interface {
+	Name() (string, error)
+	PkgName() string
 	GetDocumentText() (string, error)
 	GetModel() (interface{}, error)
 	GetLocation() (string, error)
@@ -28,6 +31,17 @@ type modelTarget struct {
 	structTypeNode     *ast.StructType
 	definitionPosition token.Position
 	pkgName            string
+}
+
+func (mt *modelTarget) Name() (string, error) {
+	if mt.typeNode == nil {
+		return "", errors.New("model target is missing a type node")
+	}
+	return mt.typeNode.Name.String(), nil
+}
+
+func (mt *modelTarget) PkgName() string {
+	return mt.pkgName
 }
 
 func (mt *modelTarget) GetDocumentText() (string, error) {

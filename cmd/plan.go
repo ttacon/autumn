@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -9,6 +11,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ttacon/autumn/lib/config"
+	"github.com/ttacon/autumn/lib/engine"
 	"github.com/urfave/cli/v2"
 )
 
@@ -28,7 +31,14 @@ func plan(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
+
 	root := os.DirFS(cwd)
+	if _, err := root.Open(outputFileName); err == nil && !c.Bool("force") {
+		return errors.New("output file already exists")
+	}
+
+	// NOTE(ttacon): punting on targeting mode for now since we support
+	// other methods for specifying generation targts.
 
 	var conf config.Config
 	if data, err := ioutil.ReadFile(
@@ -44,5 +54,56 @@ func plan(c *cli.Context) error {
 		return err
 	}
 
-	return retrieveSourcesForEngine(conf)
+	// NOTE(ttacon): Instead of retrieving assets, should we report missing
+	// dependencies and support retrieveing them now via a flag?
+	if err := retrieveSourcesForEngine(conf); err != nil {
+		return err
+	}
+
+	// Load in the engine.
+	eng, err := engine.NewEngine(root)
+	if err != nil {
+		return err
+	}
+
+	// Identify our targets to create.
+	targets, err := eng.IdentifyModelTargets()
+	if err != nil {
+		return err
+	}
+
+	// Generate plan (Model -> <Controller, Router, Service> -> Framework -> Templates).
+	var planData = make(map[string]PlanData)
+	for _, target := range targets {
+		name, err := target.Name()
+		if err != nil {
+			return err
+		}
+		planData[name] = PlanData{
+			Config: conf,
+			Model: ModelTargetPlan{
+				Name:        name,
+				PackageName: target.PkgName(),
+				Raw:         target,
+			},
+		}
+	}
+
+	rawPlanData, err := json.Marshal(planData)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(outputFileName, rawPlanData, 0644)
+}
+
+type PlanData struct {
+	Model  ModelTargetPlan
+	Config config.Config
+}
+
+type ModelTargetPlan struct {
+	Name        string
+	PackageName string
+	Raw         interface{} // This should be versioned
 }

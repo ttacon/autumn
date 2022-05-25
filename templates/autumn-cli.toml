@@ -25,3 +25,22 @@ value = false
 name = "get"
 description = "Retrieve all frameworks."
 action = "get"
+
+[[command]]
+name = "plan"
+description = "Plan the code to generate."
+action = "plan"
+
+[[command.flags]]
+type = "string"
+name = "out"
+aliases = [ "o" ]
+description = "The output file to write the plan to."
+value = "autumn-plan.json"
+
+[[command.flags]]
+type = "bool"
+name = "force"
+aliases = [ "f" ]
+description = "Force creating a new plan file even if one exists"
+value = false
