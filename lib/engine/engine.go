@@ -11,19 +11,33 @@ import (
 	"strings"
 )
 
+// Engine is our entrypoint into how we load model targets for any and all
+// future processing.
 type Engine interface {
+	// IdentifyModelTargets runs the engine identifying all identifiable
+	// ModelTargets.
 	IdentifyModelTargets() ([]ModelTarget, error)
 }
 
+// ModelTarget is a model struct that has been identified that we want to
+// generate code for.
 type ModelTarget interface {
+	// Name returns the name of the model target.
 	Name() (string, error)
+	// PkgName returns the name of the package that the model is a part of.
 	PkgName() string
+	// GetDocumentText returns any comments attributed to the model target.
 	GetDocumentText() (string, error)
+	// GetModel returns the struct type node.
 	GetModel() (interface{}, error)
+	// GetLocation returns the location of the struct in its source file.
 	GetLocation() (string, error)
+	// ToTemplateVariables returns the model target as variables that can be
+	// used by engine consumers for generating code.
 	ToTemplateVariables() map[string]interface{}
 }
 
+// modelTarget is our local implementation of ModelTarget.
 type modelTarget struct {
 	astNode            ast.Node
 	docText            string
@@ -69,6 +83,9 @@ var (
 	debugLoggingOn = strings.ToLower(os.Getenv("AUTUMN_DEBUG_LOGGING_ON")) == "true"
 )
 
+// NewEngine returns a new engine rooted at the goven fs.FS root.
+// It returns an error if it fails to walk the directory at the root of the
+// fs.FS.
 func NewEngine(root fs.FS) (Engine, error) {
 	var (
 		fileEntries  = make(map[string]fs.DirEntry)
@@ -111,6 +128,11 @@ func NewEngine(root fs.FS) (Engine, error) {
 
 var autumnModelIdentifier = "@Autumn:Model"
 
+// modelTargetFromText creates a model target from source code when it finds
+// a struct with the given annotation.
+//
+// NOTE: in a future iteration, it would be useful to also support providing
+// model struct names via a config file in addition to using annotations.
 func modelTargetFromText(name, text string) ([]ModelTarget, error) {
 	var targets []ModelTarget
 
